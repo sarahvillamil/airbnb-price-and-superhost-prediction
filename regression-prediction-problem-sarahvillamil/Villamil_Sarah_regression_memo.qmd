@@ -1,0 +1,114 @@
+---
+title: "Regression Prediction Problem Memo"
+subtitle: |
+  | Regression
+  | Data Science 3 with R (STAT 301-3)
+author:
+  - name: Sarah Villamil
+date: today
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    embed-resources: true
+    code-fold: false
+    link-external-newwindow: true
+
+execute:
+  warning: false
+
+from: markdown+emoji
+reference-location: margin
+citation-location: margin 
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[Github Repo Link](https://github.com/stat301-3-2026-spring/regression-prediction-problem-sarahvillamil)
+
+:::
+
+```{r}
+#| echo: false
+library(here)
+load(here("01_attempt/results/model_comparison.rda"))
+load(here("02_attempt/results/rf_parameters_02.rda"))
+load(here("02_attempt/results/bt_parameters_02.rda"))
+load(here("03_attempt/results/rf_parameters_03.rda"))
+load(here("03_attempt/results/bt_parameters_03.rda"))
+```
+
+
+
+# Introduction
+For this prediction problem, I was trying to create a model that would predict the price of Airbnbs based on known qualities of the listings.
+
+After three different attempts, techinques, recipes, cleaning, and models, I chose my joined model from my second attempt and my third attempt as my two final submissions. For both of these attempts, I tuned my outliers with a boosted tree model and my non-outliers with a random forest model.
+
+# Two Submissions
+The model that performed the best on the public leaderboard was the third attempt of joined boosted tree and random forest model. This model had a MAE of 156.54. The best hyperparameters from this joined model are shown in @tbl-bt-parameters-03 for the boosted tree outlier model and @tbl-rf-parameters-03 for the random forest typical model
+
+```{r}
+#| label: tbl-bt-parameters-03
+#| echo: false
+#| tbl-cap: "Boosted Tree Outlier Best Parameters from Attempt 03."
+bt_parameters_03
+```
+
+```{r}
+#| label: tbl-rf-parameters-03
+#| echo: false
+#| tbl-cap: "Random Forest Outlier Best Parameters from Attempt 03."
+rf_parameters_03
+```
+
+For my second submission, I chose my second attempt of joined boosted tree and random forest model. While on the public leaderboard this model performed with an MAE of 187.18, I believe it will perform better on the private public leaderboard. The best hyperparameters from this joined model are shown in @tbl-bt-parameters for the boosted tree outlier model and @tbl-rf-parameters for the random forest typical model
+
+```{r}
+#| label: tbl-bt-parameters
+#| echo: false
+#| tbl-cap: "Boosted Tree Outlier Best Parameters from Attempt 02."
+bt_parameters_02
+```
+
+```{r}
+#| label: tbl-rf-parameters
+#| echo: false
+#| tbl-cap: "Random Forest Outlier Best Parameters from Attempt 02."
+rf_parameters_02
+```
+
+As discussed in class, the public leaderboard has more outliers due to the splits used. Between both of these choices for submissions, I believed that the third attempt model will still perform better. However, there is a chance the third model is overfit to the public leaderboard and the second attempt model will perform better with private leaderboard.
+
+# Best Model Type: Tree
+For these regression prediction problem, I attempted three different techniques and methods. In my first attempt, I tried out a variety of tree and non tree models. Given that I explored and worked on the classification problem first, I had an inclination that tree models would perform better than non-tree models. However, I still wanted to confirm this in my first attempt. My focus for this attempt was to use the cleaning I had found in my classification models as a baseline and apply it to the regression model. @tbl-model-comparison below shows that the best MAE result of each of the model types. This supports the idea to explore tree models in the rest of my attempts.
+
+```{r}
+#| label: tbl-model-comparison
+#| echo: false
+#| tbl-cap: "Model Type Comparison from Attempt 01."
+model_comparison
+```
+
+
+# Best Preprocessing Technique
+For my two submissions, I used the outlier techinque discussed in class. I believe Jace explained how he decided to deal with the outliers of this prediction problem. This motivated me to try this out on my own. 
+
+At first I tried to look at rare or expensive amenities as a way to identify the outliers in the test set. However, after further analysis I decided to use property type as the determinant of outliers. In an EDA, I found that properties labeled as `Room in Hotel` and `Room in Boutique Hotel` were useful identifiers of outliers. With this knowledge, I created two different types of datasets, I created a outlier and typical dataset. The outlier dataset was mutated into price bins to create a multiclass classification problem to be tuned with a boosted tree model. I then created a typical datasets excluding all of the outlier data and tuned this as a regression problem with price as the outcome with a random forest model. I chose boosted trees to tune the outliers as they are more sensitive to them than random forest. I decided to do random forest for typical as to not overfit it with the boosted tree model. For the typical dataset, I folded with cross validation and for the outliers, I bootstrapped due to its smaller dataset. I then trained and predicted each model with the test set individually and binded them for the submission. 
+
+After getting a better result with this technique, I decided to try it one more time with maintaining the model technique, but adjusting the cleaning and recipes. As I stated before, the initial cleaning of the data was from the classification problem. However, I had the theory that some of the predictors were not as useful for the regression problem and may be hurting the model. For the third attempt, I removed some of the cleaning steps such as specific amenities as an attempt to lower the number of predictors while not lowering the results. While this did not cause any change in the public leaderboard, I hope it is not overfit and performs better in the private one.
+
+The second change I implemented was in the recipes. In the classification problem, I explored the missingness of the dataset and addressed it in this predicition problem for the third attempt. Depending on the percent of missingness, I did either simple or advanced imputations step. While the third attempt performed worse than the second attempt, I am curious if these efforts helped with the overfitting of the outliers.
+
+# Conclusion
+Overall, I found that individually predicting outliers through a multiclass classification model was the best way to deal with the outliers in the dataset. I found that the combination of a boosted tree with random forest model worked the best for this prediction problem. I would recommend the use of tree models and would further explore how the difference in recipe and preprocessing steps affects the results of this joined dataset. 
+
+# Disclosure & comment on generative AI use: 
+I used Google Gemini to help with the initial cleaning of the datasets. I used it to help identify which amenities to create as separate predictors and for help with the geosphere package and distance from city center. I also used it as it and fix errors in writing the regex and string code in my data cleaning for some of the predictors.
+
+

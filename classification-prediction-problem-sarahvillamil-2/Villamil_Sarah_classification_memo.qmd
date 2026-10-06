@@ -1,0 +1,93 @@
+---
+title: "Classification Prediction Problem Memo"
+subtitle: |
+  | Classification
+  | Data Science 3 with R (STAT 301-3)
+author:
+  - name: Sarah Villamil
+date: today
+
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 4
+    toc-location: left
+    embed-resources: true
+    code-fold: false
+    link-external-newwindow: true
+
+execute:
+  warning: false
+
+from: markdown+emoji
+reference-location: margin
+citation-location: margin 
+---
+
+::: {.callout-tip icon=false}
+
+## Github Repo Link
+
+[Github Repo Link](https://github.com/stat301-3-2026-spring/classification-prediction-problem-sarahvillamil-2)
+
+:::
+
+```{r}
+#| echo: false
+library(here)
+load(here("01_attempt/results/model_comparison.rda"))
+load(here("02_attempt/results/rf_parameters.rda"))
+load(here("02_attempt/results/bt_light_parameters.rda"))
+```
+
+# Introduction
+For this prediction problem, I was trying to create a model that would predict the if a host is a superhost on Airbnbs based on known qualities of their listings.
+
+After three different attempts, techniques, recipes, cleaning, and models, I chose my light boosted tree and random forest model from my second attempt as my two final submissions. 
+
+# Two Submissions
+The model that performed the best on the public leaderboard was the light boosted tree from the second attempt. This model had a ROC-AUC of 0.9661. I chose this as my first submission as overall I saw that the light boosted tree model was the best type of models for this data and prediction problem. The best hyperparameters from this model are shown @tbl-lbt-parameters.
+
+```{r}
+#| label: tbl-lbt-parameters
+#| echo: false
+#| tbl-cap: "Light Boosted Tree Best Parameters from Attempt 02."
+bt_light_parameters
+```
+
+However, the light boosted tree model is prone to overfitting. Due to this I think that this model might have not performed as well on the private leaderboard. 
+For my second submission, I chose my second attempt random forest model. On the public leaderboard this model performed with an ROC-AUC of 0.9656 which is really good. The best hyperparameters from this model are shown @tbl-rf-parameters. However, I feel more confident that that random forest model may be less overfit than the light boosted tree model. 
+
+```{r}
+#| label: tbl-rf-parameters
+#| echo: false
+#| tbl-cap: "Random Forest Best Parameters from Attempt 02."
+rf_parameters
+```
+
+# Best Model Type: Tree
+For this classification prediction problem, I attempted three different techniques and methods. For the first go around, I relayed on doing an intense EDA of the data. I noted which variables were logical or characters that should be factors. My two biggest breakthroughs with the cleaning was the cleaning of the amenities and using latitude and longitude to know how far from the city center the Airbnb is. I got these hints in class, I believe from TA Jonah. In my first attempt, I tried out almost every model mentioned in class. I very quickly saw that some models simply did not work well with this data. It was clear when selecting the best model from each model type that the tree models performed significantly better than non-tree models. @tbl-model-comparison below shows that the best ROC-AUC result of each of the model types in my first attempt. This supports the idea to explore tree models in the rest of my attempts. 
+
+```{r}
+#| label: tbl-model-comparison
+#| echo: false
+#| tbl-cap: "Model Type Comparison from Attempt 01."
+model_comparison
+```
+
+
+# Best Preprocessing Technique
+In my first attempt, I got results above the 0.9 threshold for some of the model types, especially tree. As I approached my second attempt, I changed two things that I believe made a big difference. 
+
+Mentioned in class as well, we were given the hint of using the data we already know to inform or correct our predictions with the test set. Many of the superhosts in the training set are repeated in the testing set. Due to this, we already know if the host is a superhost; there just needs to be a way to identify these superhosts. The variable host_about was a good way to identify which hosts were the same in across both sets. It should be noted that the known superhosts technique is a form of data leakage. However, given that we know that the hosts we are correcting as superhosts are as accurate as the data collected, in the context of this problem the method can be used to improve our model. I double checked in this second attempt to see if adding known superhosts really made a difference. I submitted two different predictions, the first a boosted tree model with known superhosts and then the same boosted tree model without. The boosted tree model with known superhosts performed with an ROC-AUC of 0.9636 while the one without performed with an ROC-AUC of 0.9327. This supports that adding the known superhosts is worth the effort.
+
+The second main change I did was apply explicit imputation steps in the recipes. I noticed that a lot of the missingness shared across multiple variables. This indicated that it was not random which was a good sign. Based on the percent missingness for each variables, I determined which imputation steps should be performed on them. It also allowed me to decide which variables have too much missingness and should be thrown out. I believe that this change, in combination with the known superhosts, is what resulted in the ROC-AUC of my two submissions. I believe the models did a better job at tuning the data due to a lack of missingness. I then corrected the predictions based on the known data.
+
+After getting a better result with these changes, I decided to try it one more time with maintaining the model but adjusting the cleaning and recipes. I had the theory about whether the missingness and imputation steps actually helped with the model. For the third attempt, I kept the same cleaning, folding, and known superhosts but removed any advanced or specific imputation. I then tested this out on a light boosted tree model. This model results in a ROC-AUC of 0.9557. While this is still a good result, it did support my decision earlier to add the imputations steps and chose my two submissions from that second attempt.
+
+# Conclusion
+Overall, I found that data cleaning, recipe imputation, and known superhosts adjustments resulted in the best model results. Overall the random forest and light boosted tree models performed the best. However, there is a chance that any of these two model types is just overfitting with the public leader board. I would be interested to further explore how these model perform on the private leader board and adjust my cleaning accordingly. 
+
+# Disclosure & comment on generative AI use: 
+I used Google Gemini to help with the initial cleaning of the datasets. I used it to help identify which amenities to create as separate predictors, for help with the geosphere package and distance from city center, and with how to use host_about to inform the known superhosts. I also used it as it and fix errors in writing the regex and string code in my data cleaning for some of the predictors.

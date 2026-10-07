@@ -1,6 +1,3 @@
-# airbnb-price-and-superhost-prediction
-Classification and regression models predicting Airbnb Superhost status and listing prices.
-
 ## Repo Organization 
 ### Sub-directories 
 - [classification-prediction-problem-sarahvillamil-2/](classification-prediction-problem-sarahvillamil-2): classification prediction problem.

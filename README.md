@@ -1,5 +1,10 @@
-### airbnb-price-and-superhost-prediction
+# airbnb-price-and-superhost-prediction
 Classification and regression models predicting Airbnb Superhost status and listing prices.
+
+## Repo Organization 
+### Sub-directories 
+- [classification-prediction-problem-sarahvillamil-2/](classification-prediction-problem-sarahvillamil-2): classification prediction problem.
+- [regression-prediction-problem-sarahvillamil-2/](regression-prediction-problem-sarahvillamil-2): regression prediction problem
 
 # Airbnb Prediction Models
 This repository contains two predictive analytics projects built using Airbnb listing data from Chicago, Jersey City, and Washington, D.C. The projects focus on both classification and regression problems using machine learning, feature engineering, model tuning, and leaderboard evaluation.
